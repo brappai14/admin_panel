@@ -16,7 +16,7 @@ const client = generateClient<Schema>();
 
 export default function App() {
   const { signOut } = useAuthenticator();
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [customers, setCustomers] = useState<Array<Schema["Cust"]["type"]>>([]);  // Changed from Todo to Cust
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -25,45 +25,50 @@ export default function App() {
     email: "",
   });
 
-  function listTodos() {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
+  // Function to list customers
+  function listCustomers() {
+    client.models.Cust.observeQuery().subscribe({  // Changed from Todo to Cust
+      next: (data) => setCustomers([...data.items]),
     });
   }
 
+  // Fetch the customers when the component is mounted
   useEffect(() => {
-    listTodos();
+    listCustomers();
   }, []);
 
-  function createTodo() {
-    client.models.Todo.create({
-      content: window.prompt("Todo content"),
+  // Function to create a new customer
+  function createCustomer() {
+    client.models.Cust.create({  // Changed from Todo to Cust
+      name: window.prompt("Enter customer name"), // Example prompt to add customer name
     });
   }
 
+  // Handle input change for form
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  // Handle form submission for customer data
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Customer Data Submitted: ", formData);
-    // You can now process the form data (e.g., save it to your database or perform any other action)
+    // Process the form data (e.g., save it to your database or perform any other action)
   };
 
   return (
     <main style={{ display: "flex", justifyContent: "space-between", padding: "20px" }}>
       <div style={{ flex: 1 }}>
-        <h1>My todos</h1>
-        <button onClick={createTodo}>+ new</button>
+        <h1>My Customers</h1>
+        <button onClick={createCustomer}>+ new customer</button>
         <ul>
-          {todos.map((todo) => (
-            <li key={todo.id}>{todo.content}</li>
+          {customers.map((customer) => (
+            <li key={customer.id}>{customer.name}</li>  {/* Changed from todo.content to customer.name */}
           ))}
         </ul>
         <div>
-          🥳 App successfully hosted. Try creating a new todo.
+          🥳 App successfully hosted. Try creating a new customer.
           <br />
           <a href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/">
             Review next steps of this tutorial.
